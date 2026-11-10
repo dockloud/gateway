@@ -6,6 +6,8 @@ github.com/dockloud/user-auth v0.0.0-20261109073357-81a8c4f1d611 h1:8DnhG/g+Ok9t
 github.com/dockloud/user-auth v0.0.0-20261109073357-81a8c4f1d611/go.mod h1:SzJMIWjm/rSJxEipbPPB5QHsNRodomRtzMgveLZj2mU=
 github.com/dockloud/user-auth v0.0.0-20261110074652-319da784e82d h1:WGhpTGrKiP44nwWKKbJHdPOLh/wgDLfrLxRVvQm5SDo=
 github.com/dockloud/user-auth v0.0.0-20261110074652-319da784e82d/go.mod h1:SzJMIWjm/rSJxEipbPPB5QHsNRodomRtzMgveLZj2mU=
+github.com/dockloud/user-auth v0.0.0-20261110081610-cd72cdf4a611 h1:cnqc48vYeBMUHQgWt7TNFxKzQyWBccth9CRpIx0HAAU=
+github.com/dockloud/user-auth v0.0.0-20261110081610-cd72cdf4a611/go.mod h1:SzJMIWjm/rSJxEipbPPB5QHsNRodomRtzMgveLZj2mU=
 github.com/golang-jwt/jwt/v5 v5.3.1 h1:kYf81DTWFe7t+1VvL7eS+jKFVWaUnK9cB1qbwn63YCY=
 github.com/golang-jwt/jwt/v5 v5.3.1/go.mod h1:fxCRLWMO43lRc8nhHWY6LGqRcf+1gQWArsqaEUEa5bE=
 github.com/golang/protobuf v1.5.4 h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=
