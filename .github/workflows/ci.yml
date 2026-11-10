@@ -18,6 +18,13 @@ jobs:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
 
     steps:
+      - name: Configure Git for private repositories
+        env:
+          GH_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
+        run: |
+          git config --global url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
+          go env -w GOPRIVATE=github.com/dockloud/*
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -39,6 +46,13 @@ jobs:
       packages: write
 
     steps:
+      - name: Configure Git for private repositories
+        env:
+          GH_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
+        run: |
+          git config --global url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
+          go env -w GOPRIVATE=github.com/dockloud/*
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -50,8 +64,11 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Docker image
+        env:
+          GH_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
         run: |
           docker build \
+            --secret id=github_token,env=GH_TOKEN \
             --file Dockerfile \
             --tag ghcr.io/dockloud/${{ env.MODULE_NAME }}:${{ env.MODULE_VER }} \
             .
