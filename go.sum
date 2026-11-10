@@ -1,5 +1,7 @@
 github.com/dockloud/contract v0.0.0-20261109051604-d14e4073518a h1:RzdKA20U3H2cP353bhhGIkc9llZjoMR/oev548HnACA=
 github.com/dockloud/contract v0.0.0-20261109051604-d14e4073518a/go.mod h1:3Ax9+plowXXNdICjkGsUTQnV4XENBtnWDW7VkAyBA88=
+github.com/dockloud/contract v0.0.0-20261110080028-2c337361eb5f h1:mQtOnCXsliPfbGDStB9MU9ikq4KAfI/TRo/VR/Jl0DQ=
+github.com/dockloud/contract v0.0.0-20261110080028-2c337361eb5f/go.mod h1:3Ax9+plowXXNdICjkGsUTQnV4XENBtnWDW7VkAyBA88=
 github.com/dockloud/user-auth v0.0.0-20261109073357-81a8c4f1d611 h1:8DnhG/g+Ok9ttomOcwjGN4IQSDTMHtGGNPC5g8iPsRY=
 github.com/dockloud/user-auth v0.0.0-20261109073357-81a8c4f1d611/go.mod h1:SzJMIWjm/rSJxEipbPPB5QHsNRodomRtzMgveLZj2mU=
 github.com/dockloud/user-auth v0.0.0-20261110074652-319da784e82d h1:WGhpTGrKiP44nwWKKbJHdPOLh/wgDLfrLxRVvQm5SDo=

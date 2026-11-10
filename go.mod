@@ -3,7 +3,7 @@ module github.com/dockloud/gateway
 go 1.27.3
 
 require (
-	github.com/dockloud/contract v0.0.0-20261109051604-d14e4073518a
+	github.com/dockloud/contract v0.0.0-20261110080028-2c337361eb5f
 	github.com/dockloud/user-auth v0.0.0-20261110074652-319da784e82d
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.33.0
 	google.golang.org/grpc v1.85.0
