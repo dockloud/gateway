@@ -26,13 +26,6 @@ func establishConnection(addr string) *grpc.ClientConn {
 		log.Fatal(err)
 	}
 
-	defer func(conn *grpc.ClientConn) {
-		err := conn.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}(conn)
-
 	return conn
 }
 
@@ -40,7 +33,9 @@ func main() {
 	ctx := context.Background()
 
 	authConn := establishConnection(os.Getenv("AUTH_CONN_ADDR"))
+	defer authConn.Close()
 	docConn := establishConnection(os.Getenv("DOC_CONN_ADDR"))
+	defer docConn.Close()
 
 	mux := runtime.NewServeMux(
 		runtime.WithMetadata(metadata.MetadataWithUID),

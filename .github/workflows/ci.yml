@@ -27,13 +27,6 @@ jobs:
         with:
           go-version: '1.27'
 
-      - name: Configure Git for private repositories
-        env:
-          GH_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
-        run: |
-          git config --global url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
-          go env -w GOPRIVATE=github.com/dockloud/*
-
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
