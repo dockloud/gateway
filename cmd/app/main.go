@@ -9,6 +9,8 @@ import (
 
 	authv1 "github.com/dockloud/contract/gen/auth/v1"
 	doc1 "github.com/dockloud/contract/gen/document/v1"
+	"github.com/dockloud/service-auth/core"
+	"github.com/dockloud/service-auth/grpcauth"
 	"github.com/dockloud/user-auth/pkg/infrastructure/verifier"
 	"github.com/dockloud/user-auth/pkg/transport/http/metadata"
 	"github.com/dockloud/user-auth/pkg/transport/http/middleware"
@@ -17,10 +19,11 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func establishConnection(addr string) *grpc.ClientConn {
+func establishConnection(addr string, authInterceptor grpc.UnaryClientInterceptor) *grpc.ClientConn {
 	conn, err := grpc.NewClient(
 		addr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(authInterceptor),
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -32,9 +35,29 @@ func establishConnection(addr string) *grpc.ClientConn {
 func main() {
 	ctx := context.Background()
 
-	authConn := establishConnection(os.Getenv("AUTH_CONN_ADDR"))
+	key := serviceauth.Key{
+		ID:      "dck-gateway-v1",
+		Service: "dockloud-gateway",
+		Secret:  []byte(os.Getenv("GATEWAY_SERVICE_KEY")),
+	}
+	signer, err := serviceauth.NewSigner(key)
+	if err != nil {
+		log.Fatal(err)
+	}
+	authInterceptor, err := grpcauth.NewClientInterceptor(signer, 0)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	authConn := establishConnection(
+		os.Getenv("AUTH_CONN_ADDR"),
+		authInterceptor,
+	)
 	defer authConn.Close()
-	docConn := establishConnection(os.Getenv("DOC_CONN_ADDR"))
+	docConn := establishConnection(
+		os.Getenv("DOC_CONN_ADDR"),
+		authInterceptor,
+	)
 	defer docConn.Close()
 
 	mux := runtime.NewServeMux(
