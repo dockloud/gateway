@@ -8,7 +8,8 @@ import (
 	"time"
 
 	authv1 "github.com/dockloud/contract/gen/auth/v1"
-	doc1 "github.com/dockloud/contract/gen/document/v1"
+	docv1 "github.com/dockloud/contract/gen/document/v1"
+	linkv1 "github.com/dockloud/contract/gen/link/v1"
 	"github.com/dockloud/service-auth/core"
 	"github.com/dockloud/service-auth/grpcauth"
 	"github.com/dockloud/user-auth/pkg/infrastructure/verifier"
@@ -59,6 +60,11 @@ func main() {
 		authInterceptor,
 	)
 	defer docConn.Close()
+	linkConn := establishConnection(
+		os.Getenv("LINK_CONN_ADDR"),
+		authInterceptor,
+	)
+	defer linkConn.Close()
 
 	mux := runtime.NewServeMux(
 		runtime.WithMetadata(metadata.MetadataWithUID),
@@ -67,7 +73,10 @@ func main() {
 	if err := authv1.RegisterAuthServiceHandler(ctx, mux, authConn); err != nil {
 		log.Fatal(err)
 	}
-	if err := doc1.RegisterDocumentServiceHandler(ctx, mux, docConn); err != nil {
+	if err := docv1.RegisterDocumentServiceHandler(ctx, mux, docConn); err != nil {
+		log.Fatal(err)
+	}
+	if err := linkv1.RegisterLinkServiceHandler(ctx, mux, linkConn); err != nil {
 		log.Fatal(err)
 	}
 
