@@ -85,7 +85,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	handler := middleware.UserAuthMiddleware(ver)(mux)
+	handler := middleware.UserAuthMiddleware(
+		ver,
+		"/api/v1/auth/register",
+		"/api/v1/auth/login",
+		"/api/v1/link/document/",
+	)(mux)
 	server := &http.Server{
 		Addr:              ":8080",
 		Handler:           handler,
