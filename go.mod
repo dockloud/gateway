@@ -3,7 +3,7 @@ module github.com/dockloud/gateway
 go 1.27.4
 
 require (
-	github.com/dockloud/config v0.0.0-20261124083932-f10bb6432cb0
+	github.com/dockloud/config v0.0.0-20261127071035-8f160e4df146
 	github.com/dockloud/contract v0.0.0-20261119064745-e77b1560f74d
 	github.com/dockloud/service-auth v0.0.0-20261111043837-db5419a71a29
 	github.com/dockloud/user-auth v0.0.0-20261120070619-f17894a9c313
@@ -28,6 +28,6 @@ require (
 	golang.org/x/sys v0.50.0 // indirect
 	golang.org/x/text v0.44.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20261118221215-c8830f628b3f // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20261118221215-c8830f628b3f // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20261123191846-1e707ab9fbc2 // indirect
 	google.golang.org/protobuf v1.36.12 // indirect
 )

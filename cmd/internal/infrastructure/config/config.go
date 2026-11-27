@@ -9,13 +9,15 @@ import (
 )
 
 type viperConfig struct {
-	Name         string   `mapstructure:"name"`
-	ID           string   `mapstructure:"id"`
-	Port         string   `mapstructure:"port"`
-	Timeout      int      `mapstructure:"timeout"`
-	PublicRoutes []string `mapstructure:"public_routes"`
+	Service struct {
+		Name         string   `mapstructure:"name"`
+		ID           string   `mapstructure:"id"`
+		Port         string   `mapstructure:"port"`
+		Timeout      int      `mapstructure:"timeout"`
+		PublicRoutes []string `mapstructure:"public_routes"`
+	} `mapstructure:"service"`
 
-	Dependencies []struct {
+	Dependencies map[string]struct {
 		Name    string `mapstructure:"name"`
 		Address string `mapstructure:"address"`
 	} `mapstructure:"dependencies"`
@@ -73,11 +75,11 @@ func (c viperConfig) ToMergedConfig(secr secrets) *model.MergedConfig {
 	}
 
 	return &model.MergedConfig{
-		Name:         c.Name,
-		ID:           c.ID,
-		Port:         c.Port,
-		Timeout:      c.Timeout,
-		PublicRoutes: c.PublicRoutes,
+		Name:         c.Service.Name,
+		ID:           c.Service.ID,
+		Port:         c.Service.Port,
+		Timeout:      c.Service.Timeout,
+		PublicRoutes: c.Service.PublicRoutes,
 		JWT: model.JWTConfig{
 			ServiceSecret: []byte(secr.ServiceToken),
 			UserAuthToken: secr.UserAuthToken,
