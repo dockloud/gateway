@@ -4,12 +4,13 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	authv1 "github.com/dockloud/contract/gen/auth/v1"
 	docv1 "github.com/dockloud/contract/gen/document/v1"
 	linkv1 "github.com/dockloud/contract/gen/link/v1"
+	model "github.com/dockloud/gateway/cmd/internal/domain/config"
+	"github.com/dockloud/gateway/cmd/internal/infrastructure/config"
 	"github.com/dockloud/service-auth/core"
 	"github.com/dockloud/service-auth/grpcauth"
 	"github.com/dockloud/user-auth/pkg/infrastructure/verifier"
@@ -20,9 +21,14 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func establishConnection(addr string, authInterceptor grpc.UnaryClientInterceptor) *grpc.ClientConn {
+func establishConnection(conf *model.MergedConfig, name string, authInterceptor grpc.UnaryClientInterceptor) *grpc.ClientConn {
+	depConfig, ok := conf.Dependencies[name]
+	if !ok {
+		log.Fatalf("dependency %s not found", name)
+	}
+
 	conn, err := grpc.NewClient(
-		addr,
+		depConfig.Address,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithUnaryInterceptor(authInterceptor),
 	)
@@ -35,11 +41,15 @@ func establishConnection(addr string, authInterceptor grpc.UnaryClientIntercepto
 
 func main() {
 	ctx := context.Background()
+	conf, err := config.LoadMergedConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	key := serviceauth.Key{
-		ID:      "dck-gateway-v1",
-		Service: "dockloud-gateway",
-		Secret:  []byte(os.Getenv("GATEWAY_SERVICE_KEY")),
+		ID:      conf.ID,
+		Service: conf.Name,
+		Secret:  conf.JWT.ServiceSecret,
 	}
 	signer, err := serviceauth.NewSigner(key)
 	if err != nil {
@@ -50,20 +60,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	authConn := establishConnection(
-		os.Getenv("AUTH_CONN_ADDR"),
-		authInterceptor,
-	)
+	authConn := establishConnection(conf, "auth", authInterceptor)
 	defer authConn.Close()
-	docConn := establishConnection(
-		os.Getenv("DOC_CONN_ADDR"),
-		authInterceptor,
-	)
+	docConn := establishConnection(conf, "document", authInterceptor)
 	defer docConn.Close()
-	linkConn := establishConnection(
-		os.Getenv("LINK_CONN_ADDR"),
-		authInterceptor,
-	)
+	linkConn := establishConnection(conf, "link", authInterceptor)
 	defer linkConn.Close()
 
 	mux := runtime.NewServeMux(
@@ -80,24 +81,22 @@ func main() {
 		log.Fatal(err)
 	}
 
-	ver, err := verifier.NewVerifier(os.Getenv("JWT_AUTH_KEY"))
+	ver, err := verifier.NewVerifier(conf.JWT.UserAuthToken)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	handler := middleware.UserAuthMiddleware(
 		ver,
-		"/api/v1/auth/register",
-		"/api/v1/auth/login",
-		"/api/v1/link/document/",
+		conf.PublicRoutes...,
 	)(mux)
 	server := &http.Server{
-		Addr:              ":8080",
+		Addr:              conf.Port,
 		Handler:           handler,
-		ReadHeaderTimeout: 5 * time.Second,
+		ReadHeaderTimeout: time.Duration(conf.Timeout) * time.Second,
 	}
 
-	log.Println("HTTP gateway listening on :8080")
+	log.Printf("HTTP gateway listening on %s", conf.Port)
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatal(err)
 	}
